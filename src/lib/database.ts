@@ -15,6 +15,7 @@ export function getPool() {
 
   globalThis.postgresPool ??= new Pool({
     connectionString: databaseUrl,
+    max: 5, // Limit connections to prevent "max clients reached" error
     ssl: {
       rejectUnauthorized: false,
     },
