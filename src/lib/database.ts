@@ -15,7 +15,9 @@ export function getPool() {
 
   globalThis.postgresPool ??= new Pool({
     connectionString: databaseUrl,
-    max: 5, // Limit connections to prevent "max clients reached" error
+    max: 1, // 1 connection per serverless instance to avoid limits
+    idleTimeoutMillis: 1000, // Drop idle connections immediately 
+    connectionTimeoutMillis: 5000,
     ssl: {
       rejectUnauthorized: false,
     },
