@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { AdminDashboardClient, type AdminSectionKey } from "@/app/admin/dashboard/AdminDashboardClient";
 import { getCurrentUser } from "@/lib/auth";
 import { getSiteContent, listInquiries, listUsers } from "@/lib/database";
+import { defaultSiteContent } from "@/data/site";
 
 export async function AdminDashboardPageContent({
   activeSection,
@@ -18,14 +19,19 @@ export async function AdminDashboardPageContent({
     redirect("/dashboard");
   }
 
+  const needsUsers = activeSection === "roles" || activeSection === "dashboard";
+  const needsInquiries = activeSection === "inquiries" || activeSection === "dashboard";
+  const needsSiteContent = !["roles", "database", "notifications", "analytics", "inquiries"].includes(activeSection);
+
   const [users, inquiries, siteContent] = await Promise.all([
-    listUsers(),
-    listInquiries(),
-    getSiteContent(),
+    needsUsers ? listUsers({ limit: 50 }) : Promise.resolve([]),
+    needsInquiries ? listInquiries({ limit: 50 }) : Promise.resolve([]),
+    needsSiteContent ? getSiteContent() : Promise.resolve(defaultSiteContent),
   ]);
 
   return (
     <AdminDashboardClient
+      key={activeSection}
       activeSection={activeSection}
       users={users}
       inquiries={inquiries}

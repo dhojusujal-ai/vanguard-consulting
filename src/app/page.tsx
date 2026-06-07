@@ -17,7 +17,6 @@ import { PageTransition } from "@/components/transitions/PageTransition";
 import { SmoothScrollProvider } from "@/components/animations/SmoothScrollProvider";
 import { getSiteContent } from "@/lib/database";
 
-export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const content = await getSiteContent();

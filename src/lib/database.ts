@@ -201,21 +201,23 @@ export async function deleteSession(token_hash: string) {
   );
 }
 
-export async function listUsers() {
+export async function listUsers({ limit = 50, offset = 0 } = {}) {
   await ensureAuthTables();
 
   const result = await getPool().query(
     `
       select id, full_name, email, role, created_at
       from public.app_users
-      order by created_at desc;
+      order by created_at desc
+      limit $1 offset $2;
     `,
+    [limit, offset]
   );
 
   return result.rows.map(toAppUser);
 }
 
-export async function listInquiries(): Promise<InquiryRecord[]> {
+export async function listInquiries({ limit = 50, offset = 0 } = {}): Promise<InquiryRecord[]> {
   await ensureInquiryTable();
 
   const result = await getPool().query(
@@ -224,8 +226,9 @@ export async function listInquiries(): Promise<InquiryRecord[]> {
         preferred_time, counseling_mode, message, created_at
       from public.inquiries
       order by created_at desc
-      limit 50;
+      limit $1 offset $2;
     `,
+    [limit, offset]
   );
 
   return result.rows;

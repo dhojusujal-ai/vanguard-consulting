@@ -21,7 +21,6 @@ import { Footer } from "@/components/sections/Footer";
 import { Button } from "@/components/ui/button";
 import { getSiteContent } from "@/lib/database";
 
-export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Blog",

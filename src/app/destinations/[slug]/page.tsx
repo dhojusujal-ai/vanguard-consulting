@@ -34,7 +34,6 @@ const countryFlags: Record<string, string> = {
   bangladesh: "/flags/bangladesh.svg",
 };
 
-export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return destinationDetails.map((destination) => ({

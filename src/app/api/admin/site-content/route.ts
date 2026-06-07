@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/lib/auth";
 import { saveSiteContent } from "@/lib/database";
 import type { SiteContent } from "@/types";
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
@@ -13,6 +14,8 @@ export async function POST(request: Request) {
     const content = (await request.json()) as SiteContent;
 
     await saveSiteContent(content);
+
+    revalidatePath("/", "layout");
 
     return Response.json({ ok: true });
   } catch {
