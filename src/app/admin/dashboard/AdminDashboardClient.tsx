@@ -260,7 +260,8 @@ export type AdminSectionKey =
   | "roles"
   | "analytics"
   | "notifications"
-  | "database";
+  | "database"
+  | "admin-code";
 
 const inquiryStatuses = [
   "New",
@@ -847,9 +848,9 @@ export function AdminDashboardClient({
   const didMountRef = useRef(false);
   const adminCodeFetchedRef = useRef(false);
 
-  // Fetch masked admin code when settings section is first viewed
+  // Fetch masked admin code when admin-code section is first viewed
   useEffect(() => {
-    if (activeSection !== "settings" || adminCodeFetchedRef.current) return;
+    if (activeSection !== "admin-code" || adminCodeFetchedRef.current) return;
     adminCodeFetchedRef.current = true;
     fetch("/api/admin/admin-code")
       .then((res) => res.json())
@@ -1734,6 +1735,7 @@ export function AdminDashboardClient({
     { label: "Gallery", section: "gallery", href: "/admin/dashboard/gallery" },
     { label: "Team", section: "team", href: "/admin/dashboard/team" },
     { label: "Settings", section: "settings", href: "/admin/dashboard/settings" },
+    { label: "Admin Code", section: "admin-code", href: "/admin/dashboard/admin-code" },
     { label: "SEO", section: "seo", href: "/admin/dashboard/seo" },
     { label: "Users & Roles", section: "roles", href: "/admin/dashboard/roles" },
     { label: "Analytics", section: "analytics", href: "/admin/dashboard/analytics" },
@@ -2607,7 +2609,6 @@ export function AdminDashboardClient({
           ) : null}
 
           {activeSection === "settings" ? (
-          <>
           <AdminSection
             id="settings"
             icon={Settings}
@@ -2629,8 +2630,9 @@ export function AdminDashboardClient({
               <Field label="Google Maps embed" value={websiteSettingValues.googleMapsEmbed} />
             </div>
           </AdminSection>
+          ) : null}
 
-          {/* Admin Signup Code Card */}
+          {activeSection === "admin-code" ? (
           <AdminSection
             id="admin-code"
             icon={KeyRound}
@@ -2716,7 +2718,6 @@ export function AdminDashboardClient({
               </div>
             </div>
           </AdminSection>
-          </>
           ) : null}
 
           {activeSection === "seo" ? (

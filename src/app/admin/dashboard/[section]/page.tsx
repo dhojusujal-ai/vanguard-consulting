@@ -25,6 +25,7 @@ const adminSections = [
   "analytics",
   "notifications",
   "database",
+  "admin-code",
 ] satisfies AdminRouteSection[];
 
 export const metadata = {

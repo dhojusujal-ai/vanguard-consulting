@@ -11,11 +11,17 @@ async function main() {
     const result = await pool.query("select content from public.site_content where id = 'main' limit 1;");
     if (result.rows.length > 0) {
       const content = result.rows[0].content;
-      content.websiteSettings.contactPhone = '+977 9705387380';
+
+      // Fix hero highlight capitalization
+      if (content.pageSections) {
+        content.pageSections.heroHighlight = 'Global Education Starts Here.';
+        console.log('Set heroHighlight to: Global Education Starts Here.');
+      }
+
       await pool.query("update public.site_content set content = $1 where id = 'main'", [JSON.stringify(content)]);
-      console.log("Updated phone number in database!");
+      console.log('Database updated successfully!');
     } else {
-      console.log("No content found in the database. Wait, let's create it?");
+      console.log('No content found in the database.');
     }
   } catch(e) {
     console.error(e);
