@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "IELTS preparation Kathmandu",
     "PTE classes Nepal",
     "MBBS Bangladesh Nepal",
-    "education consultancy Kamaladi",
+    "education consultancy Bagbazar",
     "best consultancy Nepal",
     "abroad study Nepal 2026",
   ],

@@ -577,11 +577,12 @@ export const websiteSettings: WebsiteSettings = {
   logo: "/logo.png",
   favicon: "/favicon.ico",
   contactPhone: "+977 9705387380",
-  contactEmail: "info@vanguardconsulting.com.np",
-  officeAddress: "Kamaladi, Kathmandu — near Ratna Park, Nepal",
+  contactEmail: "vanguardnepal@gmail.com",
+  officeAddress: "Bagbazar, Opposite Padma Kanya College, Sallyan House, 2nd Floor",
+  officeHours: "Sunday to Friday, 9:00 AM to 6:00 PM",
   socialMediaLinks: "Facebook, Instagram, LinkedIn, TikTok",
   emailSender: "Vanguard Consulting Admissions",
-  emailReplyTo: "counseling@vanguardconsulting.com.np",
+  emailReplyTo: "vanguardnepal@gmail.com",
   googleMapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3532.3!2d85.317!3d27.705!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjfCsDQyJzE4LjAiTiA4NcKwMTknMDIuMCJF!5e0!3m2!1sen!2snp!4v1",
 };
 
@@ -598,7 +599,7 @@ export const navItems = [
 ];
 
 export const footerLinks = [
-  { label: "Kamaladi, Kathmandu", icon: Landmark },
+  { label: "Bagbazar, Kathmandu", icon: Landmark },
   { label: "Career Guidance", icon: BriefcaseBusiness },
   { label: "Visa Advisory", icon: BadgeCheck },
 ];
@@ -829,7 +830,7 @@ export const pageSections: PageSectionContent = {
   footerDescription:
     "Kathmandu's trusted study abroad consultancy — helping Nepali students find the right university, build strong applications, and secure their visas since 2015.",
   footerCopyright: "2026 Vanguard Consulting. All rights reserved.",
-  footerTagline: "Kamaladi, Kathmandu · Nepal",
+  footerTagline: "Bagbazar, Kathmandu · Nepal",
 };
 
 export const defaultSiteContent: SiteContent = {

@@ -112,8 +112,7 @@ export function Contact({
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">Office Hours</p>
-                <p className="mt-1 text-sm font-medium text-slate-700">Sun–Fri: 9:00 AM – 6:00 PM</p>
-                <p className="text-sm text-slate-500">Saturday: 10:00 AM – 3:00 PM</p>
+                <p className="mt-1 text-sm font-medium text-slate-700">{settings.officeHours}</p>
               </div>
             </div>
 

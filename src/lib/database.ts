@@ -1,6 +1,6 @@
 import { Pool } from "pg";
 import { defaultSiteContent } from "@/data/site";
-import type { AppUser, InquiryPayload, InquiryRecord, SiteContent, UserRole } from "@/types";
+import type { AppUser, InquiryPayload, InquiryRecord, SiteContent, UserRole, WebsiteSettings } from "@/types";
 
 declare global {
   var postgresPool: Pool | undefined;
@@ -270,6 +270,34 @@ function mergeDestinationDetails(content: Partial<SiteContent> | null | undefine
   return [...savedDestinations, ...missingDefaults];
 }
 
+function mergeWebsiteSettings(content: Partial<SiteContent> | null | undefined) {
+  const savedSettings: Partial<WebsiteSettings> = content?.websiteSettings ?? {};
+  const mergedSettings = {
+    ...defaultSiteContent.websiteSettings,
+    ...savedSettings,
+  };
+
+  return {
+    ...mergedSettings,
+    contactEmail:
+      !savedSettings.contactEmail || savedSettings.contactEmail === "info@vanguardconsulting.com.np"
+        ? defaultSiteContent.websiteSettings.contactEmail
+        : mergedSettings.contactEmail,
+    officeAddress:
+      !savedSettings.officeAddress || savedSettings.officeAddress.includes("Kamaladi")
+        ? defaultSiteContent.websiteSettings.officeAddress
+        : mergedSettings.officeAddress,
+    officeHours:
+      !savedSettings.officeHours || savedSettings.officeHours.includes("Saturday")
+        ? defaultSiteContent.websiteSettings.officeHours
+        : mergedSettings.officeHours,
+    emailReplyTo:
+      !savedSettings.emailReplyTo || savedSettings.emailReplyTo === "counseling@vanguardconsulting.com.np"
+        ? defaultSiteContent.websiteSettings.emailReplyTo
+        : mergedSettings.emailReplyTo,
+  };
+}
+
 function mergeSiteContent(content: Partial<SiteContent> | null | undefined): SiteContent {
   return {
     ...defaultSiteContent,
@@ -279,10 +307,7 @@ function mergeSiteContent(content: Partial<SiteContent> | null | undefined): Sit
       ...defaultSiteContent.pageSections,
       ...(content?.pageSections ?? {}),
     },
-    websiteSettings: {
-      ...defaultSiteContent.websiteSettings,
-      ...(content?.websiteSettings ?? {}),
-    },
+    websiteSettings: mergeWebsiteSettings(content),
   };
 }
 

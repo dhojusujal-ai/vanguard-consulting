@@ -96,6 +96,7 @@ export type WebsiteSettings = {
   contactPhone: string;
   contactEmail: string;
   officeAddress: string;
+  officeHours: string;
   socialMediaLinks: string;
   emailSender: string;
   emailReplyTo: string;

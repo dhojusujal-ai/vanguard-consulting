@@ -161,6 +161,7 @@ type EditableWebsiteSettings = {
   contactPhone: string;
   contactEmail: string;
   officeAddress: string;
+  officeHours: string;
   socialMediaLinks: string;
   emailSender: string;
   emailReplyTo: string;
@@ -1308,6 +1309,7 @@ export function AdminDashboardClient({
         contactPhone: websiteSettingValues.contactPhone,
         contactEmail: websiteSettingValues.contactEmail,
         officeAddress: websiteSettingValues.officeAddress,
+        officeHours: websiteSettingValues.officeHours,
         socialMediaLinks: websiteSettingValues.socialMediaLinks,
         emailSender: websiteSettingValues.emailSender,
         emailReplyTo: websiteSettingValues.emailReplyTo,
@@ -1609,6 +1611,7 @@ export function AdminDashboardClient({
         contactPhone: fields.contactPhone,
         contactEmail: fields.contactEmail,
         officeAddress: fields.officeAddress,
+        officeHours: fields.officeHours,
         socialMediaLinks: fields.socialMediaLinks,
         emailSender: fields.emailSender,
         emailReplyTo: fields.emailReplyTo,
@@ -1665,6 +1668,7 @@ export function AdminDashboardClient({
     { label: "Countries", section: "countries", href: "/admin/dashboard/countries" },
     { label: "Testimonials", section: "testimonials", href: "/admin/dashboard/testimonials" },
     { label: "Why Choose Us", section: "why-choose-us", href: "/admin/dashboard/why-choose-us" },
+    { label: "Page Sections", section: "page-sections", href: "/admin/dashboard/page-sections" },
     { label: "Services", section: "services", href: "/admin/dashboard/services" },
     { label: "Classes", section: "test-prep", href: "/admin/dashboard/test-prep" },
     { label: "Applications", section: "applications", href: "/admin/dashboard/applications" },
@@ -2017,6 +2021,107 @@ export function AdminDashboardClient({
             action="Edit page copy"
             onAction={openPageSectionsEditor}
           >
+            {/* ── Hero Poster ── */}
+            <div className="rounded-lg border border-[#087ec3]/25 bg-gradient-to-br from-[#087ec3]/6 via-white to-[#f75b20]/4 p-5 shadow-sm">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <div className="inline-flex items-center gap-2 rounded-lg bg-[#087ec3]/10 px-3 py-1.5 text-xs font-semibold text-[#087ec3]">
+                    <Images size={14} />
+                    Hero Section
+                  </div>
+                  <h3 className="mt-2 font-display text-lg font-semibold text-slate-950">Hero Poster Image</h3>
+                  <p className="mt-1 text-sm text-slate-600">This is the large promotional poster displayed in the right panel of the homepage hero section. Upload a new image or paste a URL to replace it. Changes save automatically.</p>
+                </div>
+                <StatusPill
+                  status={
+                    publishStatus === "saving"
+                      ? "Saving"
+                      : publishStatus === "saved"
+                        ? "Published"
+                        : publishStatus === "error"
+                          ? "Save failed"
+                          : "Ready"
+                  }
+                />
+              </div>
+              <div className="mt-5 grid gap-5 lg:grid-cols-[1fr_1.5fr]">
+                {/* Live preview */}
+                <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-sm" style={{ minHeight: "220px" }}>
+                  {isPreviewableImage(pageSectionValues.heroImage) ? (
+                    <div
+                      className="absolute inset-0 rounded-2xl bg-cover bg-center"
+                      style={{ backgroundImage: imageBackground(pageSectionValues.heroImage) }}
+                      aria-label="Hero poster preview"
+                    />
+                  ) : (
+                    <div className="grid min-h-[220px] place-items-center text-center">
+                      <div>
+                        <Images className="mx-auto text-slate-300" size={36} />
+                        <p className="mt-3 text-sm font-semibold text-slate-500">No poster set</p>
+                        <p className="mt-1 text-xs text-slate-400">Upload an image below to preview it here.</p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute inset-x-0 bottom-0 rounded-b-2xl bg-gradient-to-t from-slate-950/60 to-transparent px-3 py-2 text-xs font-semibold text-white">
+                    Live preview
+                  </div>
+                </div>
+                {/* Upload controls */}
+                <div className="grid content-start gap-4">
+                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                    Upload new poster image
+                    <input
+                      id="hero-poster-upload"
+                      className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-normal text-slate-700 outline-none transition file:mr-3 file:rounded-md file:border-0 file:bg-[#087ec3] file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-white hover:border-[#087ec3]/40 focus:border-[#087ec3] focus:bg-white"
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.addEventListener("load", () => {
+                          const url = typeof reader.result === "string" ? reader.result : "";
+                          if (!url) return;
+                          setPageSectionValues((current) => ({ ...current, heroImage: url }));
+                        });
+                        reader.readAsDataURL(file);
+                        event.currentTarget.value = "";
+                      }}
+                    />
+                  </label>
+                  <label className="grid gap-2 text-sm font-medium text-slate-700">
+                    Or enter image path / URL
+                    <div className="flex gap-2">
+                      <input
+                        className="h-11 flex-1 rounded-lg border border-slate-200 bg-slate-50 px-3 text-sm font-normal text-slate-700 outline-none transition hover:border-[#087ec3]/40 focus:border-[#087ec3] focus:bg-white"
+                        type="text"
+                        placeholder="e.g. /poster.jpeg or https://..."
+                        value={pageSectionValues.heroImage}
+                        onChange={(event) =>
+                          setPageSectionValues((current) => ({ ...current, heroImage: event.target.value }))
+                        }
+                      />
+                      {pageSectionValues.heroImage && (
+                        <button
+                          type="button"
+                          title="Clear poster"
+                          aria-label="Clear poster image"
+                          onClick={() => setPageSectionValues((current) => ({ ...current, heroImage: "" }))}
+                          className="inline-flex size-11 items-center justify-center rounded-lg border border-rose-200 bg-white text-rose-500 transition hover:bg-rose-50"
+                        >
+                          <X size={16} />
+                        </button>
+                      )}
+                    </div>
+                  </label>
+                  <div className="rounded-lg border border-slate-100 bg-slate-50 p-3 text-xs leading-5 text-slate-500">
+                    <span className="font-semibold text-slate-700">Tips: </span>
+                    Use JPEG or PNG for best quality. Recommended size: 800&times;600 px or larger. The image is displayed in the rounded card on the right side of the homepage hero section.
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
@@ -2459,6 +2564,7 @@ export function AdminDashboardClient({
               <Field label="Contact phone" value={websiteSettingValues.contactPhone} />
               <Field label="Contact email" value={websiteSettingValues.contactEmail} />
               <Field label="Office address" value={websiteSettingValues.officeAddress} />
+              <Field label="Office hours" value={websiteSettingValues.officeHours} />
               <Field label="Social media links" value={websiteSettingValues.socialMediaLinks} />
               <Field label="Email sender" value={websiteSettingValues.emailSender} />
               <Field label="Email reply-to" value={websiteSettingValues.emailReplyTo} />

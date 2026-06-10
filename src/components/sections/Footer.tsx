@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { navItems, pageSections, websiteSettings as defaultWebsiteSettings } from "@/data/site";
 import type { PageSectionContent, WebsiteSettings } from "@/types";
 
@@ -71,6 +71,10 @@ export function Footer({
               <div className="flex items-start gap-2.5 text-slate-400">
                 <MapPin size={15} className="mt-0.5 shrink-0 text-[#087ec3]" />
                 {settings.officeAddress}
+              </div>
+              <div className="flex items-center gap-2.5 text-slate-400">
+                <Clock size={15} className="shrink-0 text-[#087ec3]" />
+                {settings.officeHours}
               </div>
             </div>
 

@@ -1,4 +1,5 @@
 import { CosmicBackground } from "@/components/background/CosmicBackground";
+import { WhatsAppChat } from "@/components/contact/WhatsAppChat";
 import { GlowCursor } from "@/components/cursor/GlowCursor";
 import { Navbar } from "@/components/navbar/Navbar";
 import { ChoiceAndServices } from "@/components/sections/ChoiceAndServices";
@@ -45,6 +46,7 @@ export default async function HomePage() {
           />
         </main>
         <Footer settings={content.websiteSettings} content={content.pageSections} />
+        <WhatsAppChat settings={content.websiteSettings} />
       </PageTransition>
     </SmoothScrollProvider>
   );
