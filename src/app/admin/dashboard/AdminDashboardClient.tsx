@@ -836,7 +836,63 @@ export function AdminDashboardClient({
     },
   ]);
   const [editor, setEditor] = useState<EditorState | null>(null);
+  const [adminCodeMasked, setAdminCodeMasked] = useState<string>("••••••••••••");
+  const [newAdminCode, setNewAdminCode] = useState("");
+  const [confirmAdminCode, setConfirmAdminCode] = useState("");
+  const [showNewCode, setShowNewCode] = useState(false);
+  const [showConfirmCode, setShowConfirmCode] = useState(false);
+  const [adminCodeStatus, setAdminCodeStatus] = useState<"idle" | "loading" | "saved" | "error">("idle");
+  const [adminCodeFeedback, setAdminCodeFeedback] = useState("");
   const didMountRef = useRef(false);
+  const adminCodeFetchedRef = useRef(false);
+
+  // Fetch masked admin code when settings section is first viewed
+  useEffect(() => {
+    if (activeSection !== "settings" || adminCodeFetchedRef.current) return;
+    adminCodeFetchedRef.current = true;
+    fetch("/api/admin/admin-code")
+      .then((res) => res.json())
+      .then((data: { maskedCode?: string }) => {
+        if (data.maskedCode) setAdminCodeMasked(data.maskedCode);
+      })
+      .catch(() => {});
+  }, [activeSection]);
+
+  const handleAdminCodeSave = async () => {
+    if (newAdminCode.length < 6) {
+      setAdminCodeStatus("error");
+      setAdminCodeFeedback("Code must be at least 6 characters.");
+      return;
+    }
+    if (newAdminCode !== confirmAdminCode) {
+      setAdminCodeStatus("error");
+      setAdminCodeFeedback("Codes do not match. Please re-enter.");
+      return;
+    }
+    setAdminCodeStatus("loading");
+    setAdminCodeFeedback("");
+    try {
+      const res = await fetch("/api/admin/admin-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newCode: newAdminCode, confirmCode: confirmAdminCode }),
+      });
+      const data: { ok?: boolean; maskedCode?: string; error?: string } = await res.json();
+      if (!res.ok || !data.ok) {
+        setAdminCodeStatus("error");
+        setAdminCodeFeedback(data.error ?? "Failed to update code.");
+      } else {
+        setAdminCodeStatus("saved");
+        setAdminCodeFeedback("");
+        if (data.maskedCode) setAdminCodeMasked(data.maskedCode);
+        setNewAdminCode("");
+        setConfirmAdminCode("");
+      }
+    } catch {
+      setAdminCodeStatus("error");
+      setAdminCodeFeedback("Network error. Please try again.");
+    }
+  };
 
   const activeApplications = applications.filter((row) => row.status !== "Completed").length;
 
@@ -2550,6 +2606,7 @@ export function AdminDashboardClient({
           ) : null}
 
           {activeSection === "settings" ? (
+          <>
           <AdminSection
             id="settings"
             icon={Settings}
@@ -2571,6 +2628,94 @@ export function AdminDashboardClient({
               <Field label="Google Maps embed" value={websiteSettingValues.googleMapsEmbed} />
             </div>
           </AdminSection>
+
+          {/* Admin Signup Code Card */}
+          <AdminSection
+            id="admin-code"
+            icon={KeyRound}
+            title="Admin Signup Code"
+            description="Change the secret code required when registering new admin accounts. Keep this private — anyone with this code can create an admin account."
+          >
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Current code display */}
+              <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">Current code</p>
+                <p className="mt-3 font-mono text-2xl font-semibold tracking-widest text-slate-950">
+                  {adminCodeMasked}
+                </p>
+                <p className="mt-2 text-xs text-slate-500">Masked for security. Set a new code below to change it.</p>
+              </div>
+
+              {/* Change code form */}
+              <div className="grid gap-4">
+                <label className="grid gap-1.5 text-sm font-medium text-slate-700">
+                  New admin code
+                  <div className="relative">
+                    <input
+                      id="new-admin-code"
+                      type={showNewCode ? "text" : "password"}
+                      value={newAdminCode}
+                      onChange={(e) => { setNewAdminCode(e.target.value); setAdminCodeStatus("idle"); }}
+                      placeholder="Min. 6 characters"
+                      className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 pr-10 text-sm font-normal text-slate-700 outline-none transition focus:border-[#087ec3] focus:bg-white"
+                    />
+                    <button
+                      type="button"
+                      aria-label={showNewCode ? "Hide code" : "Show code"}
+                      onClick={() => setShowNewCode((v) => !v)}
+                      className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded text-slate-400 hover:text-slate-700"
+                    >
+                      {showNewCode ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
+                </label>
+
+                <label className="grid gap-1.5 text-sm font-medium text-slate-700">
+                  Confirm new code
+                  <div className="relative">
+                    <input
+                      id="confirm-admin-code"
+                      type={showConfirmCode ? "text" : "password"}
+                      value={confirmAdminCode}
+                      onChange={(e) => { setConfirmAdminCode(e.target.value); setAdminCodeStatus("idle"); }}
+                      placeholder="Re-enter new code"
+                      className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 pr-10 text-sm font-normal text-slate-700 outline-none transition focus:border-[#087ec3] focus:bg-white"
+                    />
+                    <button
+                      type="button"
+                      aria-label={showConfirmCode ? "Hide confirm code" : "Show confirm code"}
+                      onClick={() => setShowConfirmCode((v) => !v)}
+                      className="absolute right-2 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded text-slate-400 hover:text-slate-700"
+                    >
+                      {showConfirmCode ? <EyeOff size={15} /> : <Eye size={15} />}
+                    </button>
+                  </div>
+                </label>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    id="save-admin-code-btn"
+                    disabled={adminCodeStatus === "loading" || !newAdminCode || !confirmAdminCode}
+                    onClick={handleAdminCodeSave}
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-slate-950 px-5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#087ec3] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <KeyRound size={15} />
+                    {adminCodeStatus === "loading" ? "Saving…" : "Update code"}
+                  </button>
+                  {adminCodeStatus === "saved" && (
+                    <span className="flex items-center gap-1.5 text-sm font-semibold text-emerald-600">
+                      <CheckCircle2 size={15} /> Code updated!
+                    </span>
+                  )}
+                  {adminCodeStatus === "error" && adminCodeFeedback && (
+                    <span className="text-sm text-rose-600">{adminCodeFeedback}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          </AdminSection>
+          </>
           ) : null}
 
           {activeSection === "seo" ? (

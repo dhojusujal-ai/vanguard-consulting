@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (role === "admin" && adminCode !== getAdminSignupCode()) {
+    if (role === "admin" && adminCode !== await getAdminSignupCode()) {
       return NextResponse.json(
         { error: "Enter the correct admin signup code." },
         { status: 403 },

@@ -342,3 +342,29 @@ export async function saveSiteContent(content: SiteContent) {
     [JSON.stringify(mergeSiteContent(content))],
   );
 }
+
+export async function getStoredAdminSignupCode(): Promise<string | null> {
+  if (!databaseUrl) return null;
+  try {
+    await ensureSiteContentTable();
+    const result = await getPool().query<{ content: { adminSignupCode?: string } }>(
+      "select content from public.site_content where id = 'admin_settings' limit 1;",
+    );
+    return result.rows[0]?.content?.adminSignupCode ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveAdminSignupCode(code: string): Promise<void> {
+  await ensureSiteContentTable();
+  await getPool().query(
+    `
+      insert into public.site_content (id, content, updated_at)
+      values ('admin_settings', $1::jsonb, now())
+      on conflict (id)
+      do update set content = excluded.content, updated_at = now();
+    `,
+    [JSON.stringify({ adminSignupCode: code })],
+  );
+}

@@ -75,6 +75,8 @@ export function getDashboardPath(role: UserRole) {
   return role === "admin" ? "/admin/dashboard" : "/dashboard";
 }
 
-export function getAdminSignupCode() {
-  return process.env.ADMIN_SIGNUP_CODE ?? "vanguard-admin";
+export async function getAdminSignupCode(): Promise<string> {
+  const { getStoredAdminSignupCode } = await import("@/lib/database");
+  const stored = await getStoredAdminSignupCode();
+  return stored ?? process.env.ADMIN_SIGNUP_CODE ?? "vanguard-admin";
 }

@@ -607,7 +607,7 @@ export const footerLinks = [
 export const pageSections: PageSectionContent = {
   heroEyebrow: "Kathmandu's Trusted Study Abroad Consultancy",
   heroTitle: "Your journey to",
-  heroHighlight: "global education starts here.",
+  heroHighlight: "Global Education starts here.",
   heroDescription:
     "Vanguard Consulting has helped over 2,000 Nepali students find the right university, prepare strong applications, and secure their visas — with honest, one-to-one guidance at every step.",
   heroPrimaryCta: "Book Free Counseling",
