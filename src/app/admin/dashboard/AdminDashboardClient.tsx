@@ -15,6 +15,7 @@ import {
   Download,
   Edit3,
   Eye,
+  EyeOff,
   FileText,
   Filter,
   Flag,
